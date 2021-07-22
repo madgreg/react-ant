@@ -1,75 +1,66 @@
-const webpack = require("webpack");
+const HTMLWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-const svgToMiniDataURI = require("mini-svg-data-uri");
+const { join } = require("path");
+const { HotModuleReplacementPlugin } = require("webpack");
+
+const mode = process.env.ENV || "development";
 
 module.exports = {
-    entry: path.resolve(__dirname, "./src/index.jsx"),
+    mode,
+    entry: join(__dirname, "src/index.jsx"),
+    output: {
+        path: join(__dirname, "build"),
+        filename: "bundled.js",
+    },
+    resolve: {
+        extensions: [".js", ".json", ".jsx", ".ts", ".tsx", ".node"],
+        modules: [path.resolve(__dirname, "src"), path.resolve(__dirname, "node_modules")],
+    },
+    devServer: {
+        port: 1000,
+        hot: true,
+        // open: true,
+        historyApiFallback: true,
+    },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                use: ["babel-loader", "eslint-loader"],
+                loader: "babel-loader",
+                options: {
+                    presets: ["@babel/preset-env", "@babel/preset-react"],
+                },
             },
             {
-                test: /\.css$/i,
-                // exclude: /node_modules/,
-                use: [
-                    "style-loader",
-                    {
-                        loader: "css-loader",
-                        options: {
-                            modules: true,
-                        },
-                    },
-                   
-                ],
-            },            
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"],
+            },
             {
                 test: /\.less$/,
-                use: ["style-loader", {loader: 'css-loader', options: {sourceMap: 1}}, "postcss-loader", "less-loader"]
+                use: ["style-loader", "css-loader", "less-loader"],
             },
             {
-                test: /\.(jpg|png)$/,
-                use: {
-                    loader: "url-loader",
-                },
+                test: /\.(png|jpg|gif|woff|woff2|eot|ttf)$/,
+                use: "url-loader?limit=25000",
             },
             {
-                test: /\.svg$/i,
+                test: /\.svg$/,
+                exclude: /node_modules/,
                 use: [
                     {
-                        loader: "url-loader",
-                        options: {
-                            generator: (content) => svgToMiniDataURI(content.toString()),
-                        },
+                        loader: "@svgr/webpack",
                     },
                 ],
-            },
-            {
-                test: /\.(woff|woff2|ttf)$/,
-                use: {
-                    loader: "url-loader",
-                },
             },
         ],
     },
-    resolve: {
-        extensions: ["*", ".js", ".jsx"],
-    },
-    output: {
-        path: path.resolve(__dirname, "./dist"),
-        filename: "bundle.js",
-    },
     plugins: [
-        // добавим плагин для hmr
-        new webpack.HotModuleReplacementPlugin(),
+        new HotModuleReplacementPlugin(),
+        new HTMLWebpackPlugin({
+            // favicon: false,
+            // showErrors: true,
+            // cache: true,
+            template: join(__dirname, "dist/index.html"),
+        }),
     ],
-    devServer: {
-        contentBase: path.join(__dirname, "./dist"),
-        compress: true,
-        port: 3000,
-        // сообщим dev-серверу, что в проекте используется hmr
-        hot: true,
-    },
 };

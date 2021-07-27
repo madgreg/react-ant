@@ -3,11 +3,9 @@ import { Button, DatePicker, version } from "antd";
 
 const App = () => (
     <div className="App">
-        <h1>antd version: {version}</h1>
-        <DatePicker />
-        <Button type="primary" style={{ marginLeft: 8 }}>
-            Primary Button
-        </Button>
+        <h1>{version}</h1>
+        <DatePicker/>
+        <Button onClick={()=>alert(1)}>adsda</Button>
     </div>
 );
 

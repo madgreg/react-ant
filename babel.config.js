@@ -1,14 +1,13 @@
 module.exports = {
     presets: ["@babel/preset-env", "@babel/preset-react"],
-    
-    "plugins": [ 
+
+    plugins: [
         [
             "import",
             {
-                "libraryName": "antd",
-                "libraryDirectory": "lib",
-                "style": "css"
+                libraryName: "antd",
+                style: "css",
             },
-        ],        
+        ],
     ],
 };

@@ -12,7 +12,7 @@ module.exports = {
         path: join(__dirname, "build"),
         filename: "bundled.js",
     },
-    resolve: {
+    resolve: { 
         extensions: [".js", ".json", ".jsx", ".ts", ".tsx", ".node"],
         modules: [path.resolve(__dirname, "src"), path.resolve(__dirname, "node_modules")],
     },
@@ -23,6 +23,7 @@ module.exports = {
         historyApiFallback: true,
     },
     module: {
+        strictExportPresence: true,
         rules: [
             {
                 test: /\.(js|jsx)$/,
